@@ -1,0 +1,65 @@
+// キー設定
+PUBLIC REST = VK_RETURN // 休符
+
+// 高音
+PUBLIC C0 = VK_Q // ド
+PUBLIC D0 = VK_W // レ
+PUBLIC E0 = VK_E // ミ
+PUBLIC F0 = VK_R // ファ
+PUBLIC G0 = VK_T // ソ
+PUBLIC A0 = VK_Y // ラ
+PUBLIC B0 = VK_U // シ
+
+PUBLIC Cs0 = VK_1 // ド#
+PUBLIC Ef0 = VK_2 // ミb
+PUBLIC Fs0 = VK_3 // ファ#
+PUBLIC Gs0 = VK_4 // ソ#
+PUBLIC Bf0 = VK_5 // シb
+
+// 中音
+PUBLIC C1 = VK_A // ド
+PUBLIC D1 = VK_S // レ
+PUBLIC E1 = VK_D // ミ
+PUBLIC F1 = VK_F // ファ
+PUBLIC G1 = VK_G // ソ
+PUBLIC A1 = VK_H // ラ
+PUBLIC B1 = VK_J // シ
+
+PUBLIC Cs1 = VK_6 // ド#
+PUBLIC Ef1 = VK_7 // ミb
+PUBLIC Fs1 = VK_8 // ファ#
+PUBLIC Gs1 = VK_9 // ソ#
+PUBLIC Bf1 = VK_0 // シb
+
+// 低音
+PUBLIC C2 = VK_Z // ド
+PUBLIC D2 = VK_X // レ
+PUBLIC E2 = VK_C // ミ
+PUBLIC F2 = VK_V // ファ
+PUBLIC G2 = VK_B // ソ
+PUBLIC A2 = VK_N // ラ
+PUBLIC B2 = VK_M // シ
+
+PUBLIC Cs2 = VK_I // ド#
+PUBLIC Ef2 = VK_O // ミb
+PUBLIC Fs2 = VK_P // ファ#
+PUBLIC Gs2 = VK_K // ソ#
+PUBLIC Bf2 = VK_L // シb
+
+// FFを最前面に表示
+FF_ID = GETID("FINAL FANTASY XIV", "FFXIVGAME")
+ACW(FF_ID, 0, 0, 2560, 1440, 0)
+
+// SCALE = 音階
+// OCTAVE = オクターブ（-1, 0, 1）
+// DURATION = 長さ（4分音符を1とする）
+PROCEDURE PLAY(KEY, DURATION)
+  TEMPO = 1.25 // ゲームの反応速度に合わせる
+  IF KEY = REST THEN
+    SLEEP(60 * DURATION / SPEED / TEMPO)
+  ELSE
+    KBD(KEY, DOWN)
+    SLEEP(60 * DURATION / SPEED / TEMPO)
+    KBD(KEY, UP)
+  ENDIF
+FEND

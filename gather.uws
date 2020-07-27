@@ -1,0 +1,146 @@
+// FFを最前面に表示
+FF_ID = GETID("FINAL FANTASY XIV","FFXIVGAME")
+ACW(FF_ID,0,0,2560,1440,0)
+
+WHILE TRUE
+  KBD(VK_3,CLICK,1000)
+  SLEEP(2.5)
+  KBD(VK_L,CLICK,1000)
+
+  PRINT "採集箇所の探索を開始します"
+  WHILE TRUE
+    KBD(VK_1,CLICK,0)
+    COLOR = PEEKCOLOR(1280,158,COL_RGB)
+    IF COLOR = 16777215 THEN // 採集場所
+      KBD(VK_W,DOWN,0)
+      FOR I = 1 TO 4
+        KBD(VK_A,DOWN,500)
+        KBD(VK_A,UP,500)
+        KBD(VK_SPACE,DOWN,500)
+        KBD(VK_SPACE,UP,0)
+        KBD(VK_D,DOWN,500)
+        KBD(VK_D,UP,500)
+      NEXT
+      KBD(VK_W,UP,0)
+      BREAK
+    ELSEIF COLOR = 16775344 OR COLOR = 15335394 THEN // 敵・NPC
+      KBD(VK_SHIFT,DOWN,1000)
+      KBD(VK_RETURN,CLICK,1000)
+      KBD(VK_SHIFT,UP,1000)
+      KBD(VK_A,DOWN,500)
+      KBD(VK_A,UP,500)
+    ENDIF
+    KBD(VK_A,DOWN,200)
+    KBD(VK_A,UP,200)
+    KBD(VK_1,CLICK,0)
+    KBD(VK_W,DOWN,1000)
+    KBD(VK_W,UP,1000)
+    KBD(VK_1,CLICK,0)
+    KBD(VK_W,DOWN,1000)
+    KBD(VK_W,UP,1000)
+  WEND
+
+  PRINT "採集場所に到着しました"
+  KBD(VK_4,CLICK,1000)
+  KBD(VK_RETURN,CLICK,1000)
+  SLEEP(0.5)
+  R = PEEKCOLOR(74,688,COL_R)
+  G = PEEKCOLOR(74,688,COL_G)
+  B = PEEKCOLOR(74,688,COL_B)
+  IF R > 250 AND G > 180 AND G < 200 AND B > 50 AND B < 60 THEN // 簡易採集オン
+    // BTN(LEFT,CLICK,65,1309)
+    // SLEEP(0.1)
+    // BTN(LEFT,DOWN,65,1309)
+    // SLEEP(0.1)
+    // MMV(550,1309)
+    // SLEEP(0.1)
+    // BTN(LEFT,UP)
+    // KBD(VK_CTRL,DOWN,200)
+    // KBD(VK_C,CLICK,200)
+    // KBD(VK_CTRL,UP,0)
+    // PRINT GETSTR(0)
+    PRINT "採集開始"
+  ELSEIF R > 80 AND R < 90 AND G > 70 AND G < 80 AND B > 70 AND B < 80 THEN // 簡易採集オフ
+    PRINT "簡易採集をオンにします"
+    BTN(LEFT,CLICK,74,688,1000)
+    PRINT "採集開始"
+  ELSE // 選択失敗
+    PRINT "採集を開始できません．対象の選択を再試行します"
+    KBD(VK_SHIFT,DOWN,1000)
+    KBD(VK_RETURN,CLICK,1000)
+    KBD(VK_SHIFT,UP,1000)
+    CONTINUE
+  ENDIF
+
+  DIM LIST1[] = 1, 2, 3, 4, 7, 8
+  DIM LIST2[] = 6
+  FOUND = FIND_HIDDEN(LIST1)
+  IF FOUND > -1 THEN // シュラウドソイルG2 or 古ぼけた地図が存在するとき
+    GATHER(FOUND)
+    SLEEP(2)
+    FOUND2 = FIND_HIDDEN(LIST2)
+    IF FOUND2 > -1 THEN // 残りにウィンドクリスタルがあるとき
+      GATHER(FOUND2)
+      SLEEP(2)
+      FOR I = 1 TO 4
+        GATHER(5)
+        SLEEP(2)
+      NEXT
+    ELSE // 残りがウィンドシャードのみのとき
+      FOR I = 1 TO 7
+        GATHER(5)
+        SLEEP(2)
+      NEXT
+    ENDIF
+  ELSE
+    FOUND2 = FIND_HIDDEN(LIST2)
+    IF FOUND2 > -1 THEN // ウィンドシャードとウィンドクリスタルのみ存在するとき
+      KBD(VK_5,CLICK,3000)
+      SLEEP(0.5)
+      KBD(VK_2,CLICK,3000)
+      SLEEP(0.5)
+      GATHER(FOUND2)
+      FOR I = 1 TO 4
+        GATHER(5)
+        SLEEP(2)
+      NEXT
+    ELSE // ウィンドシャードのみ存在するとき
+      FOR I = 1 TO 7
+        GATHER(5)
+        SLEEP(2)
+      NEXT
+    ENDIF
+  ENDIF
+  PRINT "採集完了"
+  KBD(VK_A,DOWN,500)
+  KBD(VK_A,UP,500)
+
+WEND 
+
+// INDEX = 1, 2, ..., 8
+FUNCTION GET_Y(INDEX)
+  RESULT = INDEX * 65 + 101
+FEND
+
+PROCEDURE GATHER(INDEX)
+  BTN(LEFT,CLICK,535,GET_Y(INDEX),1000)
+FEND
+
+FUNCTION FIND_HIDDEN(LIST[])
+  FOR I = 0 TO LENGTH(LIST) - 1
+    R = PEEKCOLOR(100,GET_Y(LIST[I]),COL_R)
+    G = PEEKCOLOR(100,GET_Y(LIST[I]),COL_G)
+    B = PEEKCOLOR(100,GET_Y(LIST[I]),COL_B)
+    IF R < 60 OR R > 70 OR G < 60 OR G > 70 OR B < 60 OR B > 70 THEN
+      IF LIST[I] = 6 THEN
+        PRINT " - ウィンドクリスタル"
+        RESULT = LIST[I]
+      ELSE
+        PRINT " - シュラウドソイルG2"
+        RESULT = LIST[I]
+      ENDIF
+      EXIT
+    ENDIF
+  NEXT
+  RESULT = -1
+FEND
