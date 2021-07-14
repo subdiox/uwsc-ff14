@@ -1,0 +1,82 @@
+// エイクリルの前に立つ（一番近いNPCがエイクリルならOK）
+// モイスをフォーカスターゲットにする
+// 水薬を選択させるために一回手動で受注・納品する
+// キーマウ操作設定にする
+// 大口依頼のカードの黄色、だいたい55くらいなはず
+
+// FFを最前面に表示
+FF_ID = GETID("FINAL FANTASY XIV","FFXIVGAME")
+ACW(FF_ID,0,0,3840,2160,0)
+
+X = 1976
+Y = 97
+
+FOR I = 1 TO 50
+  KBD(VK_F12, CLICK, 500) // NPCにターゲット
+  KBD(VK_NUMPAD0, CLICK, 500) // 話しかける
+  KBD(VK_NUMPAD0, CLICK, 500) // 会話送り
+  KBD(VK_NUMPAD2, CLICK, 500) // 製作稼業
+  KBD(VK_NUMPAD0, CLICK, 500) // 開く
+  KBD(VK_NUMPAD8, CLICK, 500) // 上
+  KBD(VK_NUMPAD8, CLICK, 500) // 上
+  KBD(VK_NUMPAD0, CLICK, 500) // Level 76
+  KBD(VK_NUMPAD0, CLICK, 500) // 選択
+  H = RGB2HSV(PEEKCOLOR(X, Y, COL_RGB))
+  IF H < 50 OR 60 < H THEN // 大口依頼じゃない場合
+    KBD(VK_NUMPAD2, CLICK, 500) // 下にずれる
+    KBD(VK_NUMPAD0, CLICK, 500) // 選択
+    SLEEP(0.5)
+    H = RGB2HSV(PEEKCOLOR(X, Y, COL_RGB))
+    IF H < 50 OR 60 < H THEN // 大口依頼じゃない場合
+      KBD(VK_NUMPAD2, CLICK, 500) // 下にずれる
+      KBD(VK_NUMPAD0, CLICK, 500) // 選択
+      SLEEP(0.5)
+      H = RGB2HSV(PEEKCOLOR(X, Y, COL_RGB))
+      IF H < 50 OR 60 < H THEN // 大口依頼じゃない場合
+        KBD(VK_ESCAPE, CLICK, 500) // 閉じる
+        KBD(VK_ESCAPE, CLICK, 500) // キャンセル
+        EXITEXIT 0 // UWSCプログラム終了
+      ENDIF
+    ENDIF
+  ENDIF
+  KBD(VK_NUMPAD0, CLICK, 500) // 選択
+  KBD(VK_NUMPAD0, CLICK, 500) // 受注
+  KBD(VK_ESCAPE, CLICK, 500) // 閉じる
+  KBD(VK_ESCAPE, CLICK, 500) // キャンセル
+
+  KBD(VK_F10, CLICK, 500) // フォーカスターゲットにターゲット
+  KBD(VK_NUMPAD0, CLICK, 500) // 話しかける
+  KBD(VK_NUMPAD0, CLICK, 500) // 会話送り
+
+  FOR J = 1 TO 25
+    KBD(VK_NUMPAD0, CLICK, 500)
+  NEXT
+NEXT
+
+FUNCTION RGB2HSV(COLOR)
+  R = INT(COLOR / (256 * 256))
+  G = INT((COLOR - R * 256 * 256) / 256)
+  B = COLOR MOD 256
+  DIM ARRAY[] = R, G, B
+  H = 0
+  RGBMAX = CALCARRAY(ARRAY, CALC_MAX)
+  RGBMIN = CALCARRAY(ARRAY, CALC_MIN)
+
+  IF R = RGBMAX THEN
+    H = 60 * (G - B) / (RGBMAX - RGBMIN)
+  ELSEIF G = RGBMAX THEN
+    H = 60 * (B - R) / (RGBMAX - RGBMIN) + 120
+  ELSE
+    H = 60 * (R - G) / (RGBMAX - RGBMIN) + 240
+  ENDIF
+
+  IF RGBMAX = RGBMIN THEN
+    H = 0
+  ENDIF
+
+  IF H < 0 THEN
+    H = H + 360
+  ENDIF
+
+  RESULT = H
+FEND
