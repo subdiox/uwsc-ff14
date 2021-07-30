@@ -1,7 +1,6 @@
 // エイクリルの前に立つ（一番近いNPCがエイクリルならOK）
 // モイスをフォーカスターゲットにする
 // 水薬を選択させるために一回手動で受注・納品する
-// キーマウ操作設定にする
 // 大口依頼のカードの黄色、だいたい55くらいなはず
 
 // FFを最前面に表示
@@ -12,6 +11,7 @@ X = 1976
 Y = 97
 
 FOR I = 1 TO 50
+  SLEEP(1.0)
   KBD(VK_F12, CLICK, 500) // NPCにターゲット
   KBD(VK_NUMPAD0, CLICK, 500) // 話しかける
   KBD(VK_NUMPAD0, CLICK, 500) // 会話送り
@@ -51,6 +51,7 @@ FOR I = 1 TO 50
   FOR J = 1 TO 25
     KBD(VK_NUMPAD0, CLICK, 500)
   NEXT
+  SLEEP(1.0)
 NEXT
 
 FUNCTION RGB2HSV(COLOR)
