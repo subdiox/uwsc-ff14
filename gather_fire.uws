@@ -1,0 +1,105 @@
+// FFを最前面に表示
+FF_ID = GETID("FINAL FANTASY XIV","FFXIVGAME")
+WIDTH = 3440
+HEIGHT = 1440
+ACW(FF_ID,0,0,WIDTH,HEIGHT,0)
+
+WHILE TRUE
+  KBD(VK_1,CLICK,1000)
+
+  PRINT "採集箇所の探索を開始します"
+  COUNT = 0
+  WHILE TRUE
+    KBD(VK_END,CLICK,0)
+    COLOR = PEEKCOLOR(1544,905,COL_RGB) // HPバーの位置
+    H = RGB2HSV(COLOR)
+    IF H = 0 THEN // 採集場所
+      KBD(VK_W,DOWN,0)
+      SLEEP(4)
+      KBD(VK_W,UP,0)
+      BREAK 
+    ELSEIF H > 90 AND H < 100 THEN // 敵・NPC
+      KBD(VK_DECIMAL,CLICK,1000)
+      KBD(VK_A,DOWN,500)
+      KBD(VK_A,UP,500)
+    ELSE
+      KBD(VK_1,CLICK,0)
+    ENDIF
+    KBD(VK_END,CLICK,1000)
+    KBD(VK_A,DOWN,200)
+    KBD(VK_A,UP,200)
+    KBD(VK_W,DOWN,500)
+    SLEEP(2)
+    KBD(VK_W,UP,500)
+    COUNT = COUNT + 1
+
+    IF COUNT > 6 THEN
+      FOR I = 1 TO COUNT / 6
+        KBD(VK_1,CLICK,0)
+        KBD(VK_W,DOWN,500)
+        SLEEP(2)
+        KBD(VK_W,UP,500)
+      NEXT
+    ENDIF
+  WEND
+
+  PRINT "採集場所に到着しました"
+  KBD(VK_NUMPAD0,CLICK,1000)
+  SLEEP(0.5)
+  COLOR = PEEKCOLOR(1760,707,COL_RGB) // 簡易採集ボタンの位置
+  IF COLOR = 6709342 THEN // 簡易採集オフ
+    PRINT "簡易採集をオンにします"
+    BTN(LEFT,CLICK,1760,707,1000) // 簡易採集ボタンの位置
+    PRINT "採集開始"
+  ELSEIF COLOR = 16766011 THEN // 簡易採集オン
+    PRINT "採集開始"
+  ELSE // 選択失敗
+    PRINT "採集を開始できません．対象の選択を再試行します"
+    KBD(VK_DECIMAL,CLICK,1000)
+    CONTINUE
+  ENDIF
+  KBD(VK_2,CLICK,3000)
+  SLEEP(0.5)
+  COLOR = PEEKCOLOR(1830,1367,COL_RGB) // GPバーの位置
+  H = RGB2HSV(COLOR)
+  IF H > 160 THEN // GPが十分にあったら
+    KBD(VK_3,CLICK,3000)
+    SLEEP(0.5)
+  ENDIF
+  BTN(LEFT,CLICK,1781,515,1000)
+  SLEEP(10)
+  PRINT "採集完了"
+  KBD(VK_A,DOWN,200)
+  KBD(VK_A,UP,200)
+  KBD(VK_W,DOWN,500)
+  SLEEP(3)
+  KBD(VK_W,UP,500)
+WEND
+
+FUNCTION RGB2HSV(COLOR)
+  R = INT(COLOR / (256 * 256))
+  G = INT((COLOR - R * 256 * 256) / 256)
+  B = COLOR MOD 256
+  DIM ARRAY[] = R, G, B
+  H = 0
+  RGBMAX = CALCARRAY(ARRAY, CALC_MAX)
+  RGBMIN = CALCARRAY(ARRAY, CALC_MIN)
+
+  IF R = RGBMAX THEN
+    H = 60 * (G - B) / (RGBMAX - RGBMIN)
+  ELSEIF G = RGBMAX THEN
+    H = 60 * (B - R) / (RGBMAX - RGBMIN) + 120
+  ELSE
+    H = 60 * (R - G) / (RGBMAX - RGBMIN) + 240
+  ENDIF
+
+  IF RGBMAX = RGBMIN THEN
+    H = 0
+  ENDIF
+
+  IF H < 0 THEN
+    H = H + 360
+  ENDIF
+
+  RESULT = H
+FEND
